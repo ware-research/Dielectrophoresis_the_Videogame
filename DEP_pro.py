@@ -1,3 +1,4 @@
+# This advanced version is not for the weak (and is updated less frequently)
 import pygame
 import random
 import numpy as np
