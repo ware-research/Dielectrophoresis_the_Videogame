@@ -92,7 +92,7 @@ def display_text(text, color, screen):
         pygame.display.update()
 
 def apply_powerup(screen):
-    power_id = 6# random.randint(1,7)
+    power_id = random.randint(1,7)
     global temperature, enemies
 
     if power_id == 1:# Heat
