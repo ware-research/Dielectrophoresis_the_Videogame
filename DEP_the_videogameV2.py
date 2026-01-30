@@ -66,7 +66,6 @@ def load_scores():
             decrypted_data = decrypt(encrypted_data, key)
             return json.loads(decrypted_data)
     except FileNotFoundError:
-        # If the file doesn't exist, create a new one with five zero scores
         default_scores = [{"score": 0} for _ in range(5)]
         save_scores(default_scores)
         return default_scores
@@ -86,7 +85,6 @@ def display_text(text, color, screen):
             surface = font.render(text, True, color)
             screen.blit(surface, (WIDTH//2, HEIGHT//2))
         else:
-            # Text display duration has elapsed, exit the loop
             running = False
 
         pygame.display.update()
@@ -120,7 +118,6 @@ def apply_powerup(screen):
                     nearest_electrode_distance = distance
             distances.append((nearest_electrode_distance, enemy_voltage))
 
-        # Move the enemy circles away from the nearest electrode if currently attracted
         for i, enemy in enumerate(enemies):
             nearest_electrode_distance, enemy_voltage = distances[i]
             if voltage > enemy_voltage:
@@ -394,11 +391,8 @@ def game_loop():
         for electrode in electrodes:
             distance = ((player_pos[0] - electrode[0]) ** 2 + (player_pos[1] - electrode[1]) ** 2) ** 0.5
             if distance < ELECTRODE_RADIUS:
-                # Apply a force to pull the player towards the electrode
                 player_pos[0] += int((electrode[0] - player_pos[0]) / 100)
                 player_pos[1] += int((electrode[1] - player_pos[1]) / 100)
-
-        #Continuation:
 
         # Check for collisions with the enemy circles
         for enemy in enemies:
@@ -502,16 +496,12 @@ def game_loop():
         screen.blit(frequency_text, (WIDTH - 150, 40))
         screen.blit(voltage_text, (WIDTH - 150, 70))
 
-        # Update the display
         pygame.display.flip()
-
-        # Limit the frame rate
         clock.tick(60)  
 
 def game_over_loop():
     global WIDTH, HEIGHT, RED, WHITE, BLUE, GREEN, game_over_running, game_over_screen, score
     
-    # Set up the screen for the title screen
     game_over_screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("Dielectrophoresis, the video game - Game Over")
     
@@ -519,17 +509,14 @@ def game_over_loop():
     while game_over_running:
         game_over_screen.fill(RED)
 
-        # Display "GAME OVER" and high score
         font_game_over = pygame.font.Font(None, 48)
         game_over_text = font_game_over.render("GAME OVER", True, WHITE)
         game_over_rect = game_over_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 50))
 
         font_high_score = pygame.font.Font(None, 36)
 
-        # Display top 5 scores
         all_scores = sorted(load_scores(), key=lambda x: x["score"], reverse=True)
-
-        # Display "GAME OVER", current score, and high score
+        
         font_game_over = pygame.font.Font(None, 48)
         game_over_text = font_game_over.render("GAME OVER", True, WHITE)
         game_over_rect = game_over_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 50))
@@ -543,7 +530,6 @@ def game_over_loop():
         high_score_text = font_high_score.render(f"High Score: {highest_score}", True, WHITE)
         high_score_rect = high_score_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 50))
 
-        # Draw the "QUIT" button
         quit_button = pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2 + 100, 100, 40)
         pygame.draw.rect(game_over_screen, BLUE, quit_button)
         quit_font = pygame.font.Font(None, 24)
@@ -551,7 +537,6 @@ def game_over_loop():
         quit_rect = quit_text.get_rect(center=quit_button.center)
         game_over_screen.blit(quit_text, quit_rect)
 
-        # Draw the "RESTART" button
         restart_button = pygame.Rect(WIDTH // 2, HEIGHT // 2 + 100, 100, 40)
         pygame.draw.rect(game_over_screen, GREEN, restart_button)
         restart_font = pygame.font.Font(None, 24)
@@ -559,7 +544,6 @@ def game_over_loop():
         restart_rect = restart_text.get_rect(center=restart_button.center)
         game_over_screen.blit(restart_text, restart_rect)
 
-        # Draw "GAME OVER", current score, and high score texts
         game_over_screen.blit(game_over_text, game_over_rect)
         game_over_screen.blit(current_score_text, current_score_rect)
         game_over_screen.blit(high_score_text, high_score_rect)
@@ -568,7 +552,6 @@ def game_over_loop():
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                # Save the current score
                 all_scores.append({"score": score})
                 save_scores(all_scores)
                 game_over_running = False
@@ -576,17 +559,15 @@ def game_over_loop():
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
 
-                # Check if the "QUIT" button is clicked
                 if quit_button.collidepoint(mouse_x, mouse_y):
                     game_over_running = False
                     pygame.quit()
                     return True
 
-                # Check if the "RESTART" button is clicked
                 if restart_button.collidepoint(mouse_x, mouse_y):
                     all_scores.append({"score": score})
                     save_scores(all_scores)
-                    # Reset game state
+
                     score = 0
                     voltage = 0
                     frequency = 0
@@ -600,11 +581,8 @@ def game_over_loop():
                         e_voltage = random.randint(1, 19)
                         enemies.append([x, y, e_pos_freq, e_neg_freq, e_voltage])
 
-                    # Save the current score
+                    game_over_running = False 
 
-                    game_over_running = False  # Exit the game over screen loop
-
-        # Draw the "QUIT" button
         quit_button = pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2 + 100, 100, 40)
         pygame.draw.rect(game_over_screen, BLUE, quit_button)
         quit_font = pygame.font.Font(None, 24)
@@ -612,7 +590,6 @@ def game_over_loop():
         quit_rect = quit_text.get_rect(center=quit_button.center)
         game_over_screen.blit(quit_text, quit_rect)
 
-        # Draw the "RESTART" button
         restart_button = pygame.Rect(WIDTH // 2, HEIGHT // 2 + 100, 100, 40)
         pygame.draw.rect(game_over_screen, GREEN, restart_button)
         restart_font = pygame.font.Font(None, 24)
@@ -623,7 +600,6 @@ def game_over_loop():
 def main():
     pygame.init()
 
-    # Create the electrode circles
     num_electrodes = 7
     electrodes = []
     for _ in range(num_electrodes):
@@ -631,7 +607,6 @@ def main():
         y = random.randint(0, HEIGHT)
         electrodes.append([x, y])
 
-    # Create the enemy circles
     num_enemies = 15
     enemies = []
     for _ in range(num_enemies):
@@ -651,3 +626,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
